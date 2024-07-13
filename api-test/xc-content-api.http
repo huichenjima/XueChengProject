@@ -108,3 +108,15 @@ Content-Type: application/json
   "teachPlanId" : 240
 }
 
+### 删除课程计划
+DELETE {{content_host}}/content/teachplan/149
+
+
+### 下移课程
+POST {{content_host}}/content/teachplan/movedown/23
+
+### 上移课程
+POST {{content_host}}/content/teachplan/moveup/23
+
+
+

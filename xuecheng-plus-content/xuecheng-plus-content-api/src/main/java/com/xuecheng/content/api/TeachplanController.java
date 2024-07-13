@@ -45,4 +45,25 @@ public class TeachplanController {
         teachplanService.saveTeachplan(saveTeachplanDto);
     }
 
+
+    @ApiOperation("删除课程计划")
+    @DeleteMapping("/teachplan/{id}")
+    public void deleteTeachplan(@PathVariable(value = "id") Long id){
+        teachplanService.deleteTeachplan(id);
+    }
+
+//    Request URL: http://localhost:8601/api/content/teachplan/movedown/43
+//    Request Method: POST
+    
+    @ApiOperation("修改排序向下移动")
+    @PostMapping("/teachplan/movedown/{id}")
+    public void movedown(@PathVariable(value = "id") Long id){
+        teachplanService.movedown(id);
+    }
+
+    @ApiOperation("修改排序向上移动")
+    @PostMapping("/teachplan/moveup/{id}")
+    public void moveup(@PathVariable(value = "id") Long id){
+        teachplanService.moveup(id);
+    }
 }

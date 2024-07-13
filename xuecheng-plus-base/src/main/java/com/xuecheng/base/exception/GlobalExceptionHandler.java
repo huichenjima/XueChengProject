@@ -32,7 +32,8 @@ public class GlobalExceptionHandler {
     public RestErrorResponse customException(XueChengPlusException e){
         log.error("系统异常{}",e.getErrMessage(),e);
         String errMessage=e.getErrMessage();
-        RestErrorResponse restErrorResponse = new RestErrorResponse(errMessage);
+        String errCode=e.getErrCode();
+        RestErrorResponse restErrorResponse = new RestErrorResponse(errMessage,errCode);
         return restErrorResponse;
 
     }

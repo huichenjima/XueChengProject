@@ -88,7 +88,7 @@
        from teachplan one
                 left join teachplan two on two.parentid=one.id
                 left join teachplan_media m1 on two.id = m1.teachplan_id
-       where one.course_id=117 and one.parentid=0
+       where one.course_id=#{id} and one.parentid=0
        order by one.orderby ,two.orderby
    </select>
 
