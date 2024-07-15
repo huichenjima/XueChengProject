@@ -2,6 +2,8 @@ package com.xuecheng.content.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -9,16 +11,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
-import com.xuecheng.content.mapper.CourseBaseMapper;
-import com.xuecheng.content.mapper.CourseCategoryMapper;
-import com.xuecheng.content.mapper.CourseMarketMapper;
+import com.xuecheng.content.mapper.*;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
 import com.xuecheng.content.model.dto.EditCourseDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
-import com.xuecheng.content.model.po.CourseBase;
-import com.xuecheng.content.model.po.CourseCategory;
-import com.xuecheng.content.model.po.CourseMarket;
+import com.xuecheng.content.model.po.*;
 import com.xuecheng.content.service.CourseBaseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +44,15 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
     private final CourseMarketMapper courseMarketMapper;
 
     private final CourseCategoryMapper courseCategoryMapper;
+
+    private final TeachplanMapper teachplanMapper;
+
+    private final TeachplanMediaMapper teachplanMediaMapper;
+
+    private final CourseTeacherMapper courseTeacherMapper;
+
+
+
 
     @Override
     public PageResult<CourseBase> pageQuery(PageParams pageParams, QueryCourseParamsDto queryCourseParamsDto) {
@@ -191,7 +198,44 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
 
 
     }
+    //这里这么多删除有并发问题
+    @Override
+    @Transactional
+    public void deleteCourse(Long companyId,Long courseId) {
 
+        CourseBase courseBase = courseBaseMapper.selectById(courseId);
+        if (courseBase==null)
+            XueChengPlusException.cast("要删除的课程课程不存在");
+        if (!courseBase.getCompanyId().equals(companyId))
+            XueChengPlusException.cast("本机构只能修改本机构的课程");
+        if (!courseBase.getAuditStatus().equals("202002"))
+            XueChengPlusException.cast("不允许删除已审核的课程");
+
+        //先删除其他的最后删除base
+//        CourseBase courseBase = courseBaseMapper.selectById(courseId);
+        //先删除老师
+        LambdaQueryWrapper<CourseTeacher> courseTeacherLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        courseTeacherLambdaQueryWrapper.eq(CourseTeacher::getCourseId,courseId);
+        int delete = courseTeacherMapper.delete(courseTeacherLambdaQueryWrapper);
+
+
+        //再删除课程计划和媒体
+        LambdaQueryWrapper<Teachplan> teachplanLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        teachplanLambdaQueryWrapper.eq(Teachplan::getCourseId,courseId);
+        teachplanMapper.delete(teachplanLambdaQueryWrapper);
+        LambdaQueryWrapper<TeachplanMedia> teachplanMediaLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        teachplanMediaLambdaQueryWrapper.eq(TeachplanMedia::getCourseId,courseId);
+        teachplanMediaMapper.delete(teachplanMediaLambdaQueryWrapper);
+
+        //再删除营销信息
+        courseMarketMapper.deleteById(courseId);
+
+        //最后删除base
+
+        courseBaseMapper.deleteById(courseId);
+
+
+    }
 
     private int saveCourseMarket(CourseMarket courseMarket) {
         String charge=courseMarket.getCharge();

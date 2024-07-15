@@ -18,9 +18,9 @@ public interface CourseTeacherService extends IService<CourseTeacher> {
 
     List<CourseTeacher> queryTeacherByCourseId(Long courseId);
 
-    CourseTeacher addCourseTeacher(CourseTeacherDto courseTeacherDto);
+    CourseTeacher addCourseTeacher(Long companyId,CourseTeacherDto courseTeacherDto);
 
-    CourseTeacher updateCourseTeacher(CourseTeacherDto courseTeacherDto);
+    CourseTeacher updateCourseTeacher(Long companyId,CourseTeacherDto courseTeacherDto);
 
-    void deleteCourseTeacher(Long courseId, Long teacherId);
+    void deleteCourseTeacher(Long companyId,Long courseId, Long teacherId);
 }

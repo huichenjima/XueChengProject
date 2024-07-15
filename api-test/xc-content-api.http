@@ -119,7 +119,7 @@ POST {{content_host}}/content/teachplan/movedown/23
 POST {{content_host}}/content/teachplan/moveup/23
 
 ### 根据课程id查询老师
-GET {{content_host}}/content/courseTeacher/list/84
+GET {{content_host}}/content/courseTeacher/list/75
 
 ### 添加老师
 POST {{content_host}}/content/courseTeacher
@@ -128,7 +128,7 @@ Content-Type: application/json
 {
   "id":null,
   "courseId": 75,
-  "teacherName": "和",
+  "teacherName": "和1",
   "position": "教师职位",
   "introduction": "教师简介"
 }
@@ -138,17 +138,17 @@ PUT {{content_host}}/content/courseTeacher
 Content-Type: application/json
 
 {
-"id": 21,
+"id": 24,
 "courseId": 75,
-"teacherName": "王老师",
-"position": "教师职位",
-"introduction": "教师简介",
+"teacherName": "刘老师",
+"position": "教师职位1",
+"introduction": "教师简1介",
 "photograph": null,
 "createDate": null
 }
 
 ### 删除老师信息
-DELETE {{content_host}}/content/courseTeacher/course/75/22
+DELETE {{content_host}}/content/courseTeacher/course/75/24
 
 
 

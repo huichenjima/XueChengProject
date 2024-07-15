@@ -37,22 +37,24 @@ public class CourseTeacherController {
     public List<CourseTeacher>  queryTeacherByCourseId(@PathVariable(value = "courseId") Long courseId){
         return courseTeacherService.queryTeacherByCourseId(courseId);
     }
-
+    // TODO : 验证机构是否一致
     @ApiOperation("添加老师")
     @PostMapping("/courseTeacher")
     public CourseTeacher addCourseTeacher(@RequestBody @Validated(value = {ValidationGroups.Inster.class}) CourseTeacherDto courseTeacherDto)
     {
-        return courseTeacherService.addCourseTeacher(courseTeacherDto);
+        Long companyId=1232141425L;
+        return courseTeacherService.addCourseTeacher(companyId,courseTeacherDto);
     }
 //    put /courseTeacher
-
+// TODO : 验证机构是否一致
     @ApiOperation("修改老师信息")
     @PutMapping("/courseTeacher")
     public CourseTeacher updateCourseTeacher(@RequestBody @Validated(value = {ValidationGroups.Update.class}) CourseTeacherDto courseTeacherDto)
     {
-        return courseTeacherService.updateCourseTeacher(courseTeacherDto);
+        Long companyId=1232141425L;
+        return courseTeacherService.updateCourseTeacher(companyId,courseTeacherDto);
     }
-
+    // TODO : 验证机构是否一致
 //    delete /ourseTeacher/course/75/26
 
 //            75:课程id
@@ -61,7 +63,8 @@ public class CourseTeacherController {
     @DeleteMapping("/courseTeacher/course/{courseId}/{teacherId}")
     public void deleteCourseTeacher(@PathVariable(value = "courseId") @NotNull Long courseId, @PathVariable(value = "teacherId") @NotNull Long teacherId)
     {
-        courseTeacherService.deleteCourseTeacher(courseId,teacherId);
+        Long companyId=1232141425L;
+        courseTeacherService.deleteCourseTeacher(companyId,courseId,teacherId);
     }
 
 

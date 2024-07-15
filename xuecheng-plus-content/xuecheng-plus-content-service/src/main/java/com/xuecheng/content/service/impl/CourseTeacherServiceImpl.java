@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,32 +35,43 @@ public class CourseTeacherServiceImpl extends ServiceImpl<CourseTeacherMapper, C
     private final CourseBaseMapper courseBaseMapper;
     @Override
     public List<CourseTeacher> queryTeacherByCourseId(Long courseId) {
-        List<CourseTeacher> courseTeachers = this.lambdaQuery().eq(CourseTeacher::getCourseId, courseId).list();
+        List<CourseTeacher> courseTeachers = this.lambdaQuery().eq(CourseTeacher::getCourseId, courseId).orderBy(true,true,CourseTeacher::getCreateDate).list();
         if (CollUtil.isEmpty(courseTeachers))
-            XueChengPlusException.cast("查不到此课程老师");
+            return Collections.emptyList();
         return courseTeachers;
     }
 
     @Override
-    public CourseTeacher addCourseTeacher(CourseTeacherDto courseTeacherDto) {
-        CourseBase courseBase = courseBaseMapper.selectById(courseTeacherDto.getCourseId());
-        if (courseBase==null)
-            XueChengPlusException.cast("该课程不存在添加失败");
-        CourseTeacher courseTeacher = BeanUtil.copyProperties(courseTeacherDto, CourseTeacher.class);
-        courseTeacher.setCreateDate(LocalDateTime.now());
-        boolean save = this.save(courseTeacher);
-        if (!save)
-            XueChengPlusException.cast("插入老师信息失败");
-        return courseTeacher;
+    public CourseTeacher addCourseTeacher(Long companyId,CourseTeacherDto courseTeacherDto) {
+        if (courseTeacherDto.getId()==null)//添加
+        {
+            CourseBase courseBase = courseBaseMapper.selectById(courseTeacherDto.getCourseId());
+            if (courseBase==null)
+                XueChengPlusException.cast("该课程不存在添加老师失败");
+            if (!courseBase.getCompanyId().equals(companyId))
+                XueChengPlusException.cast("本机构只能添加本机构的课程老师");
+
+            CourseTeacher courseTeacher = BeanUtil.copyProperties(courseTeacherDto, CourseTeacher.class);
+            courseTeacher.setCreateDate(LocalDateTime.now());
+            boolean save = this.save(courseTeacher);
+            if (!save)
+                XueChengPlusException.cast("插入老师信息失败");
+            return courseTeacher;
+        }
+        else
+            return updateCourseTeacher(companyId,courseTeacherDto);
+
 
     }
 
     @Override
-    public CourseTeacher updateCourseTeacher(CourseTeacherDto courseTeacherDto) {
-        CourseTeacher courseTeacher = this.getById(courseTeacherDto.getId());
+    public CourseTeacher updateCourseTeacher(Long companyId,CourseTeacherDto courseTeacherDto) {
         CourseBase courseBase = courseBaseMapper.selectById(courseTeacherDto.getCourseId());
         if (courseBase==null)
             XueChengPlusException.cast("该课程查不到");
+        if (!courseBase.getCompanyId().equals(companyId))
+            XueChengPlusException.cast("本机构只能修改本机构的课程老师");
+        CourseTeacher courseTeacher = this.getById(courseTeacherDto.getId());
         if (courseTeacher==null)
             XueChengPlusException.cast("该老师id查不到");
 
@@ -72,7 +84,15 @@ public class CourseTeacherServiceImpl extends ServiceImpl<CourseTeacherMapper, C
     }
 
     @Override
-    public void deleteCourseTeacher( Long courseId, Long teacherId) {
+    public void deleteCourseTeacher( Long companyId,Long courseId, Long teacherId) {
+        CourseBase courseBase = courseBaseMapper.selectById(courseId);
+        if (courseBase==null)
+            XueChengPlusException.cast("该课程查不到");
+        if (!courseBase.getCompanyId().equals(companyId))
+            XueChengPlusException.cast("本机构只能删除本机构的课程老师");
+        CourseTeacher courseTeacher = this.getById(teacherId);
+        if (courseTeacher==null)
+            XueChengPlusException.cast("该老师id查不到，删除失败");
         boolean remove = lambdaUpdate().eq(CourseTeacher::getCourseId, courseId).eq(CourseTeacher::getId, teacherId).remove();
         if (!remove)
             XueChengPlusException.cast("删除老师信息失败");

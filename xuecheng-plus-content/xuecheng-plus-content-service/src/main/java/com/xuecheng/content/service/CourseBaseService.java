@@ -26,4 +26,6 @@ public interface CourseBaseService extends IService<CourseBase> {
 
     CourseBaseInfoDto updateCourseBase(Long companyId, EditCourseDto dto);
     CourseBaseInfoDto getCourseBaseInfo(Long courseId);
+
+    void deleteCourse(Long companyId,Long courseId);
 }
