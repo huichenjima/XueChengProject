@@ -1,5 +1,5 @@
 ## 查询课程信息
-POST {{content_host}}/content/course/list?pageNo=1&pageSize=2
+POST {{gateway_host}}/content/course/list?pageNo=1&pageSize=2
 Content-Type: application/json
 
 {
@@ -149,6 +149,11 @@ Content-Type: application/json
 
 ### 删除老师信息
 DELETE {{content_host}}/content/courseTeacher/course/75/24
+
+
+
+### 媒资管理查询
+POST http://localhost:8080/files
 
 
 

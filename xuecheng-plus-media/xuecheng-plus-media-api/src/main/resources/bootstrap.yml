@@ -1,12 +1,7 @@
-
-#server:
-#  servlet:
-#    context-path: /system
-#  port: 63110
 #微服务配置
 spring:
   application:
-    name: system-service
+    name: media-api
   cloud:
     nacos:
       server-addr: 192.168.101.65:8848
@@ -18,6 +13,10 @@ spring:
         group: xuecheng-plus-project
         file-extension: yaml
         refresh-enabled: true
+        extension-configs:
+          - data-id: media-service-${spring.profiles.active}.yaml
+            group: xuecheng-plus-project
+            refresh: true
         shared-configs:
           - data-id: swagger-${spring.profiles.active}.yaml
             group: xuecheng-plus-common
@@ -27,14 +26,4 @@ spring:
             refresh: true
   profiles:
     active: dev
-## 日志文件配置路径
-#logging:
-#  config: classpath:log4j2-dev.xml
-#
-## swagger 文档配置
-#swagger:
-#  title: "学成在线系统管理"
-#  description: "系统管理接口"
-#  base-package: com.xuecheng.system
-#  enabled: true
-#  version: 1.0.0
+
