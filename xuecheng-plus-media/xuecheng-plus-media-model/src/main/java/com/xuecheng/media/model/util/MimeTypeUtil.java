@@ -19,6 +19,8 @@ import javax.activation.MimeType;
 public class MimeTypeUtil {
     public static String getMimeType(String filePath)
     {
+        if (filePath==null)
+            filePath="";
         String mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;//通用mimeType，字节流
         int i = StringUtils.lastIndexOf(filePath, ".");
         String houzui = null;

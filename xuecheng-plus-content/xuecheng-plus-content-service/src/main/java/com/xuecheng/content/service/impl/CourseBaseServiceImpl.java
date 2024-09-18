@@ -141,8 +141,12 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
             XueChengPlusException.cast("保存课程营销信息失败");
             return null;
         }
-        else {
+        else
+        {
+            //正常结束
             return getCourseBaseInfo(courseBase.getId());
+
+
 
         }
 //            throw new RuntimeException("保存课程营销信息失败");

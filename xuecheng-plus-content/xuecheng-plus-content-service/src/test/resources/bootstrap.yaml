@@ -5,14 +5,18 @@ spring:
   cloud:
     nacos:
       server-addr: 192.168.101.65:8848
-#      discovery:
-#        namespace: hechen
-#        group: xuecheng-plus-project
+      discovery:
+        namespace: hechen
+        group: xuecheng-plus-project
       config:
         namespace: hechen
         group: xuecheng-plus-project
         file-extension: yaml
         refresh-enabled: true
+        shared-configs:
+          - data-id: feign-${spring.profiles.active}.yaml
+            group: xuecheng-plus-common
+            refresh: true
 
   #profiles默认为dev
   profiles:
