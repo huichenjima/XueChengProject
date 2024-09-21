@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -63,6 +64,8 @@ public class CourseBaseInfoController {
     @PutMapping("/course")
     public CourseBaseInfoDto updateCourseBase(@RequestBody @Validated({ValidationGroups.Update.class}) EditCourseDto editCourseDto){
         // TODO 获取机构id
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); //底层是threadlocal
+        System.out.println(principal);
         Long companyId=1232141425L;
         return courseBaseService.updateCourseBase(companyId,editCourseDto);
 
@@ -73,6 +76,7 @@ public class CourseBaseInfoController {
     @DeleteMapping("/course/{courseId}")
     public void deleteCourse(@PathVariable("courseId") Long courseId)
     {
+        // TODO 获取机构id
         Long companyId=1232141425L;
         courseBaseService.deleteCourse(companyId,courseId);;
     }
