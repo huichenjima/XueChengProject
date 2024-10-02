@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,10 +59,17 @@ public class GlobalExceptionHandler {
 
     }
 
+
+
     @ResponseBody
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public RestErrorResponse exception(Exception e) {
+
+        //判断是否是权限异常
+        if (e.getMessage().equals("不允许访问")){
+            return new RestErrorResponse("您没有此权限操作此功能");
+        }
 
         log.error("【系统异常】{}",e.getMessage(),e);
 

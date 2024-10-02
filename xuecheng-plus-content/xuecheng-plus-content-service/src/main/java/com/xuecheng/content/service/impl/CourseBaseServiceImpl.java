@@ -55,17 +55,21 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
 
 
     @Override
-    public PageResult<CourseBase> pageQuery(PageParams pageParams, QueryCourseParamsDto queryCourseParamsDto) {
+    public PageResult<CourseBase> pageQuery(Long companyId,PageParams pageParams, QueryCourseParamsDto queryCourseParamsDto) {
         log.info("开始查询课程信息，参数为{}",queryCourseParamsDto);
         long pageNum=pageParams.getPageNo(),pageSize=pageParams.getPageSize();
         Page<CourseBase> page =new Page(pageNum,pageSize);
         PageResult<CourseBase> courseBasePageResult = new PageResult<CourseBase>();
         courseBasePageResult.setPage(pageNum);
         courseBasePageResult.setPageSize(pageSize);
+        // TODO 根据培训机构id拼装查询条件
+
 
         if (queryCourseParamsDto==null)
         {
-            Page<CourseBase> courseBasePage = lambdaQuery().page(page);
+            Page<CourseBase> courseBasePage = lambdaQuery()
+                    .eq(CourseBase::getCompanyId,companyId)
+                    .page(page);
             courseBasePageResult.setItems(courseBasePage.getRecords());
             courseBasePageResult.setCounts(courseBasePage.getTotal());
 
@@ -76,6 +80,7 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
                     .eq(StrUtil.isNotBlank(queryCourseParamsDto.getPublishStatus()), CourseBase::getStatus, queryCourseParamsDto.getPublishStatus())
                     .eq(StrUtil.isNotBlank(queryCourseParamsDto.getAuditStatus()), CourseBase::getAuditStatus, queryCourseParamsDto.getAuditStatus())
                     .like(StrUtil.isNotBlank(queryCourseParamsDto.getCourseName()), CourseBase::getName, queryCourseParamsDto.getCourseName())
+                    .eq(CourseBase::getCompanyId,companyId)
                     .page(page);
             courseBasePageResult.setItems(courseBasePage.getRecords());
             courseBasePageResult.setCounts(courseBasePage.getTotal());

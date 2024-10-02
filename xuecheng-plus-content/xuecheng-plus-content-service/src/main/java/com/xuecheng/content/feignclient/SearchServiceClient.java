@@ -20,7 +20,7 @@ import java.io.IOException;
  */
 //fallback拿不到异常
 //FallbackFactory可以拿到异常
-@FeignClient(value = "media-api",configuration = {MultipartSupportConfig.class},fallbackFactory = SearchServiceClientFallbackFactory.class)//这里设置服务名
+@FeignClient(value = "search",configuration = {MultipartSupportConfig.class},fallbackFactory = SearchServiceClientFallbackFactory.class)//这里设置服务名
 public interface SearchServiceClient {
 
 

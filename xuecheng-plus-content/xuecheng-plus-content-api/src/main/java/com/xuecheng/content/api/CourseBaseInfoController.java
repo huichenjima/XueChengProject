@@ -9,11 +9,16 @@ import com.xuecheng.content.model.dto.EditCourseDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.service.CourseBaseService;
+import com.xuecheng.content.util.SecurityUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -35,12 +40,26 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class CourseBaseInfoController {
     private final CourseBaseService courseBaseService;
+
+
     @ApiOperation("课程查询相关接口")
     @PostMapping("/course/list")
+    @PreAuthorize("hasAuthority('xc_teachmanager_course_list')") //指定权限标识符，拥有此权限才可以访问此方法
     public PageResult<CourseBase> list(PageParams pageParams, @RequestBody(required = false) QueryCourseParamsDto queryCourseParamsDto)
     {
+        //当前登录用户
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
+        //用户所属的机构id
+        Long companyId=null;
+        if (StringUtils.isNotEmpty(user.getCompanyId()))
+        {
+            companyId = Long.parseLong(user.getCompanyId());
+        }
 
-        return courseBaseService.pageQuery(pageParams,queryCourseParamsDto);
+
+
+
+        return courseBaseService.pageQuery(companyId,pageParams,queryCourseParamsDto);
     }
 
     @ApiOperation("新增课程接口")
@@ -64,8 +83,10 @@ public class CourseBaseInfoController {
     @PutMapping("/course")
     public CourseBaseInfoDto updateCourseBase(@RequestBody @Validated({ValidationGroups.Update.class}) EditCourseDto editCourseDto){
         // TODO 获取机构id
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); //底层是threadlocal
-        System.out.println(principal);
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); //底层是threadlocal
+//        System.out.println(principal);
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
+        System.out.println(user.getUsername());
         Long companyId=1232141425L;
         return courseBaseService.updateCourseBase(companyId,editCourseDto);
 
