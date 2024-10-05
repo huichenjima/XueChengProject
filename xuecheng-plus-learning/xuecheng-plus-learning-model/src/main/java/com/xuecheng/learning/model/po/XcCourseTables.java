@@ -46,10 +46,10 @@ public class XcCourseTables implements Serializable {
      * 课程名称
      */
     private String courseName;
-    /**
-     * 课程名称
-     */
-    private String courseType;
+//    /**
+//     * 课程名称
+//     */
+//    private String courseType;
 
 
     /**

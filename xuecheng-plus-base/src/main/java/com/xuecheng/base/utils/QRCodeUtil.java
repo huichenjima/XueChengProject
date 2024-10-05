@@ -1,4 +1,4 @@
-package com.xuecheng.orders.util;
+package com.xuecheng.base.utils;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -6,7 +6,6 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import com.xuecheng.base.utils.EncryptUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.imageio.ImageIO;

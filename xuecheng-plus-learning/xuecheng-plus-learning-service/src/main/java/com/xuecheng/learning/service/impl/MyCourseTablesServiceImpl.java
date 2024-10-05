@@ -197,7 +197,7 @@ public class MyCourseTablesServiceImpl implements MyCourseTablesService {
         //添加课程
         xcCourseTables = BeanUtil.copyProperties(xcChooseCourse, XcCourseTables.class);
         xcCourseTables.setChooseCourseId(xcChooseCourse.getId()); //记录选课表的主键
-        xcCourseTables.setCourseType(xcChooseCourse.getOrderType()); //选课类型
+//        xcCourseTables.setCourseType(xcChooseCourse.getOrderType()); //选课类型
         xcCourseTables.setUpdateDate(LocalDateTime.now());
 
         int insert = courseTablesMapper.insert(xcCourseTables);
