@@ -94,11 +94,11 @@ public class OrderController {
 //        alipayRequest.setReturnUrl("http://domain.com/CallBack/return_url.jsp");
 
         alipayRequest.setBizContent("{" +
-                "    \"out_trade_no\":\""+payNo+"\"," +
-                "    \"total_amount\":"+payRecord.getTotalPrice()+"," +
-                "    \"subject\":\""+payRecord.getOrderName()+"\"," +
-                "    \"product_code\":\"QUICK_WAP_WAY\"" +
-                "  }");//填充业务参数
+                " \"out_trade_no\":\""+payRecord.getPayNo()+"\"," +
+                " \"total_amount\":\""+payRecord.getTotalPrice()+"\"," +
+                " \"subject\":\""+payRecord.getOrderName()+"\"," +
+                " \"product_code\":\"QUICK_WAP_PAY\"" +
+                " }");//填充业务参数
         String form = null; //调用SDK生成表单
         try {
             form = alipayClient.pageExecute(alipayRequest).getBody();
@@ -108,7 +108,7 @@ public class OrderController {
         httpResponse.setContentType("text/html;charset=" + AlipayConfig.CHARSET);
         httpResponse.getWriter().write(form);//直接将完整的表单html输出到页面
         httpResponse.getWriter().flush();
-        httpResponse.getWriter().close();
+//        httpResponse.getWriter().close();
 
     }
     @ApiOperation("查询支付结果")

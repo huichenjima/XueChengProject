@@ -37,7 +37,7 @@ public class AlipayTradeQuery {
         AlipayTradeQueryModel model = new AlipayTradeQueryModel();
         
         // 设置订单支付时传入的商户订单号
-        model.setOutTradeNo("1842382300928905216");
+        model.setOutTradeNo("1842394940795285504");
         
         // 设置支付宝交易号
 //        model.setTradeNo("2014112611001004680 073956707");

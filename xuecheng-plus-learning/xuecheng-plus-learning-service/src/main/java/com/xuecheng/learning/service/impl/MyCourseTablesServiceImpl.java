@@ -2,12 +2,15 @@ package com.xuecheng.learning.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xuecheng.base.exception.XueChengPlusException;
+import com.xuecheng.base.model.PageResult;
 import com.xuecheng.content.model.po.CoursePublish;
 import com.xuecheng.learning.feignclient.ContentServiceClient;
 import com.xuecheng.learning.feignclient.MediaServiceClient;
 import com.xuecheng.learning.mapper.XcChooseCourseMapper;
 import com.xuecheng.learning.mapper.XcCourseTablesMapper;
+import com.xuecheng.learning.model.dto.MyCourseTableParams;
 import com.xuecheng.learning.model.dto.XcChooseCourseDto;
 import com.xuecheng.learning.model.dto.XcCourseTablesDto;
 import com.xuecheng.learning.model.po.XcChooseCourse;
@@ -102,7 +105,7 @@ public class MyCourseTablesServiceImpl implements MyCourseTablesService {
         }
         //学习资格，[{"code":"702001","desc":"正常学习"},{"code":"702002","desc":"没有选课或选课后没有支付"},{"code":"702003","desc":"已过期需要申请续期或重新支付"}]
         xcCourseTablesDto = BeanUtil.copyProperties(xcCourseTables, XcCourseTablesDto.class);
-        if (xcCourseTables.getValidtimeStart().isBefore(LocalDateTime.now()))
+        if (xcCourseTables.getValidtimeEnd().isBefore(LocalDateTime.now()))
             xcCourseTablesDto.setLearnStatus("702003"); //过期了
         else
             xcCourseTablesDto.setLearnStatus("702001");//正常学习
@@ -225,4 +228,54 @@ public class MyCourseTablesServiceImpl implements MyCourseTablesService {
     }
 
 
+    @Override
+    public boolean saveChooseCourseSuccess(String chooseCourseId) {
+        XcChooseCourse xcChooseCourse = chooseCourseMapper.selectById(chooseCourseId);
+        if(xcChooseCourse == null){
+            log.debug("收到支付结果通知没有查询到关联的选课记录,choosecourseId:{}",chooseCourseId);
+            return false;
+        }
+        String status = xcChooseCourse.getStatus();
+        if("701001".equals(status)){
+            //添加到课程表
+            addCourseTabls(xcChooseCourse);
+            return true;
+        }
+        //待支付状态才处理
+        if ("701002".equals(status)) {
+            //更新为选课成功
+            xcChooseCourse.setStatus("701001");
+            int update = chooseCourseMapper.updateById(xcChooseCourse);
+            if(update>0){
+                log.debug("收到支付结果通知处理成功,选课记录:{}",xcChooseCourse);
+                //添加到课程表
+                addCourseTabls(xcChooseCourse);
+                return true;
+            }else{
+                log.debug("收到支付结果通知处理失败,选课记录:{}",xcChooseCourse);
+                return false;
+            }
+        }
+
+        return false;
+
+    }
+
+    @Override
+    public PageResult<XcCourseTables> mycoursetables(MyCourseTableParams params) {
+        //当前页码
+        int pageNo = params.getPage();
+        //每页记录数
+        int size = params.getSize();
+        Page<XcCourseTables> xcCourseTablesPage = new Page<>(pageNo,size);
+        LambdaQueryWrapper<XcCourseTables> lambdaQueryWrapper = new LambdaQueryWrapper<XcCourseTables>().eq(XcCourseTables::getUserId, params.getUserId());
+        xcCourseTablesPage = courseTablesMapper.selectPage(xcCourseTablesPage, lambdaQueryWrapper);
+        PageResult<XcCourseTables> xcCourseTablesPageResult = new PageResult<>();
+        xcCourseTablesPageResult.setPage(xcCourseTablesPage.getCurrent());
+        xcCourseTablesPageResult.setPageSize(xcCourseTablesPage.getSize());
+        xcCourseTablesPageResult.setCounts(xcCourseTablesPage.getTotal());
+        xcCourseTablesPageResult.setItems(xcCourseTablesPage.getRecords());
+        return xcCourseTablesPageResult;
+
+    }
 }

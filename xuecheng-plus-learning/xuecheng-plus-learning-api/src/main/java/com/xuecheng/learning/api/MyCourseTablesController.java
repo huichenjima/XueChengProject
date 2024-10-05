@@ -73,7 +73,17 @@ public class MyCourseTablesController {
     @ApiOperation("我的课程表")
     @GetMapping("/mycoursetable")
     public PageResult<XcCourseTables> mycoursetable(MyCourseTableParams params) {
-        return null;
+        //当前登录的用户
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
+
+        if (user==null)
+            XueChengPlusException.cast("用户请登录");
+        //用户id
+        String userId = user.getId();
+        params.setUserId(userId);
+        PageResult<XcCourseTables> mycoursetables = myCourseTablesService.mycoursetables(params);
+        return mycoursetables;
+
     }
 
 }

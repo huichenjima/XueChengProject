@@ -49,6 +49,7 @@
             <result column="two_orderby"   property="orderby" />
             <result column="two_courseId"   property="courseId" />
             <result column="two_coursePubId"   property="coursePubId" />
+            <result column="two_isPreview"   property="isPreview" />
             <association property="teachplanMedia" javaType="com.xuecheng.content.model.po.TeachplanMedia">
                 <result column="teachplanMeidaId"   property="id" />
                 <result column="mediaFilename"   property="mediaFilename" />
