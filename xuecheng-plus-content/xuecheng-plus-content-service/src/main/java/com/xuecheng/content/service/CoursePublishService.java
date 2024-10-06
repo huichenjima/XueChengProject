@@ -22,6 +22,14 @@ public interface CoursePublishService {
      * @author hechen
      */
     public CoursePreviewDto getCoursePreviewInfo(Long courseId);
+    /**
+     * @description 查询缓存中的课程信息
+     * @param courseId
+     * @return com.xuecheng.content.model.po.CoursePublish
+     * @author Mr.M
+     * @date 2022/10/22 16:15
+     */
+    public CoursePublish getCoursePublishCache(Long courseId);
 
     void commitAudit(Long companyId, Long courseId);
 
